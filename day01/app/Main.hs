@@ -2,49 +2,25 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-
-
-
 module Main (main) where
 
-import Lib
-
 import Prelude
-import Witch
 
---import Data.Sequence ((|>), (<|), zipWith, singleton, Seq)
---import Data.Sequence (Seq)
-import qualified Data.Sequence as Seq
---import Data.Sequence ((|>), (<|), zipWith, singleton, Seq)
 
-import Flow ((|>))
 import Debug.Trace
-
 import Data.List (transpose, sort)
 import Control.Monad
-
+import Flow ((|>))
 
 type LocationId = Int
-
--- newtype LocationId = LocationId {unlocationId :: Int}
---     deriving (Eq, Ord)
-
--- instance Show LocationId where
---     show (LocationId idx) = "LocIdx: " ++ show idx
-
-
-
--- List of Indices
 type LocationIdList = [LocationId]
-
-
-
 
 
 
 main :: IO ()
 main = do
-    locations <- loadLocationFile "test-input-0.txt" 
+    --locations <- loadLocationFile "test-input-0.txt" 
+    locations <- loadLocationFile "test-input-1.txt" 
 
     when (length locations /= 2) $ error "Bad input lengths (I)"
 
@@ -53,20 +29,13 @@ main = do
 
     when (length lst0 /= length lst1) $ error "Bad input lengths (II)"
 
-    traceM $ show lst0
-    traceM $ show lst1
+    traceM $ "List0: " ++ show lst0
+    traceM $ "List1: " ++ show lst1
 
     let dist = listsDistance lst0 lst1
     putStrLn $ "List distance: " ++ show dist
 
-    return ()
-
-
-
-
-
-
-
+    pure ()
 
 
 loadLocationFile :: FilePath -> IO [LocationIdList]
@@ -74,28 +43,19 @@ loadLocationFile pth = do
     
         inputText <- readFile pth
 
-        -- This is by row.
         let inputDataByCol:: [[LocationId]]
             inputDataByCol = inputText 
                                 |> lines
                                 |> (fmap words) 
                                 |> ((fmap . fmap) (read @Int))
                                 |> transpose
---        traceM $ "inputDataByRow:" ++ show inputDataByRow
-
-        -- -- This is by row. transform to by column:
-        -- let inputDataByCol = inputDataByRow
-        --                     |> transpose
-
-
-        traceM $ "inputDataByCol:" ++ show inputDataByCol
-        return inputDataByCol
+        --traceM $ "inputDataByCol:" ++ show inputDataByCol
+        pure inputDataByCol
         
 
 listsDistance :: LocationIdList -> LocationIdList -> Int
-listsDistance l0 l1 = 
-
-        zip (sort l0) (sort l1)
-            |> fmap (\(l0, l1) -> abs ( l0 -  l1))
+listsDistance lst0 lst1 = 
+        zip (sort lst0) (sort lst1)
+            |> fmap (\(l0, l1) -> abs  (l0 - l1)) 
             |> sum
 
