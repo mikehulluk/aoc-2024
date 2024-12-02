@@ -8,7 +8,7 @@ import Prelude
 import Debug.Trace
 import Data.List (transpose, sort)
 import Control.Monad
-import Data.Map as Map
+import qualified Data.Map as M
 
 
 type LocationId = Int
@@ -17,8 +17,8 @@ type LocationIdList = [LocationId]
 
 main :: IO ()
 main = do
-    -- locations <- loadLocationFile "test-input-0.txt" 
-    locations <- loadLocationFile "test-input-1.txt" 
+    locations <- loadLocationFile "test-input-0.txt" 
+    -- locations <- loadLocationFile "test-input-1.txt" 
 
     when (length locations /= 2) $ error "Bad input lengths (I)"
 
@@ -31,10 +31,10 @@ main = do
     traceM $ "List1: " ++ show lst1
 
     let dist1 = listsDistancePt1 lst0 lst1
-    putStrLn $ "List distance1: " ++ show dist1
+    traceM $ "List distance1: " ++ show dist1
 
     let dist2 = listsDistancePt2 lst0 lst1
-    putStrLn $ "List distance1: " ++ show dist2
+    traceM $ "List distance1: " ++ show dist2
 
     pure ()
 
@@ -64,7 +64,7 @@ listsDistancePt1 lst0 lst1 =
 listsDistancePt2 :: LocationIdList -> LocationIdList -> Int
 listsDistancePt2 lst0 lst1 = 
         lst0
-            |> fmap (\v -> (Map.findWithDefault 0 v lst1Counts) *v)
+            |> fmap (\v -> (M.findWithDefault 0 v lst1Counts) *v)
             |> sum
 
     where lst1Counts = countMap lst1
@@ -77,11 +77,11 @@ listsDistancePt2 lst0 lst1 =
 
 
 
-countMap :: (Ord a) => [a] -> Map a Int
+countMap :: (Ord a) => [a] -> M.Map a Int
 countMap elems =
     elems 
-        |> fmap (\k -> Map.singleton k 1)
-        |> Map.unionsWith (+)
+        |> fmap (\k -> M.singleton k 1)
+        |> M.unionsWith (+)
 
 
 infixl 0 |>
